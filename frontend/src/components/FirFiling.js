@@ -9,6 +9,10 @@ export const FirFiling = () => {
                 <input type="text" id="name" name="name" required/>
                 </div>
                 <div>
+                <label for="name">Fir Against:</label>
+                <input type="text" id="name" name="name" required/>
+                </div>
+                <div>
                 <label for="contact">Contact Number:</label>
                 <input type="tel" id="contact" name="contact" required/>
                 </div>
