@@ -4,65 +4,66 @@ const bcrypt = require("bcrypt");
 
 const router = express.Router()
 
+
+
 // adding User
-router.post("/",async (req,res)=>{
-    const address = req.body.userAddress;
-    const password = req.body.userPassword;
-    const status = req.body.userStatus
-    console.log(address)
-    // if (!User.findOne({address})){
-    try{
-        const hashedPassword = await bcrypt.hash(password,10);
-        const userAdded = await User.create({
-            userAddress:address,
-            userPassword:hashedPassword,
-            userStatus:status 
+router.post("/signup",async (req,res)=>{
+    const {userAddress,userPassword,userStatus} = req.body;
+    
+    
+    // console.log("called")
+    
+    const existingUser = await User.findOne({userAddress: userAddress})
+    
+    if (!existingUser){
+        try{
+            const hashedPassword = await bcrypt.hash(userPassword,10);
+            const userAdded = await User.create({
+                userAddress:userAddress,
+                userPassword:hashedPassword,
+                userStatus:userStatus
+            });
+            return res.status(200).json(userAdded);
+        }
+        catch(error){
+            console.log(error);
+            return res.status(400).json({error: error.message});
+        }
+    }else{
+        console.log("User already exists");
+        return res.json({
+            success: true,
+            message: "User already exists"
         });
-        res.status(200).json(userAdded);
+        
     }
-    catch(error){
-        console.log(error);
-        res.status(400).json({error: error.message});
-    }
-    // }
-    // else{
-    //     res.status(400).json("User already exist")
-    // }
+    
     
     
 });
 
-// get all User
-// router.get("/",async (req,res)=>{
-//     try{
-//         const showUser = await User.find();
-//         res.status(200).json(showUser);
-//     }
-//     catch(error){
-//         console.log(error)
-//         res.status(400).json({error:error.message})
-//     }
-    
-    
-// })
 
-// get specified user
-router.post("/:address",async (req,res)=>{
-    const checkFor = req.params.address;
-    const {address,password} = req.body;
-    console.log(address);
+
+// login user
+router.get("/login", async (req,res)=>{
+    const {userAddress,userPassword} = req.body;
+    console.log(userAddress);
     try{
-        const askedUser = await User.findOne({userAddress:checkFor});
-        console.log(askedUser);
-        if (!askedUser){
-            return res.status(400).json("Invalid address");
+        const askedUser = await User.findOne({userAddress:userAddress});
+        if (askedUser){
+            const passCorrect = await bcrypt.compare(userPassword,askedUser.userPassword);
+            if (!passCorrect){
+                return res.status(400).json("Invalid password or address");
+    
+            }
+        }
 
-        }
-        const passCorrect = await bcrypt.compare(password,askedUser.userPassword);
-        if (!passCorrect){
-            return res.status(400).json("Invalid password");
-        }
-        res.status(200).json("successfully logged in");
+        
+        
+        res.status(200).json({
+            message: "successfully logged in",
+            userStatus: askedUser.userStatus
+        });
         
     }
     catch(error){
@@ -72,22 +73,24 @@ router.post("/:address",async (req,res)=>{
       
 })
 
+
+
 // delete user
-router.delete("/:id",async (req,res)=>{
+router.delete("/delete/:id",async (req,res)=>{
     
     try{
         const askedUser = await User.findByIdAndDelete(req.params.id);
-        res.status(200).json("user deleted");
+        return res.status(200).json("user deleted");
     }
     catch(error){
         console.log(error)
-        res.status(400).json({error:error.message})
+        return res.status(400).json({error:error.message})
     }
       
 })
 
 // update user
-router.patch("/:id",async (req,res)=>{
+router.patch("/update/:id",async (req,res)=>{
     const userId = req.params.id;
     // const {user, address} = req.body;
     console.log(userId)
@@ -95,11 +98,11 @@ router.patch("/:id",async (req,res)=>{
         const updateUser = await User.findByIdAndUpdate(userId,req.body,{
             new: true,
         });
-        res.status(200).json("user updated");
+        return res.status(200).json("user updated");
     }
     catch(error){
         console.log(error)
-        res.status(400).json({error:error.message})
+        return res.status(400).json({error:error.message})
     }
       
 })

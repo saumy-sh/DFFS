@@ -17,7 +17,7 @@ export const Navbar=()=>{
                 <li className="nav-item">
                     <Link className="nav-link" to="/login">Log In </Link>
                 </li>
-                <li className="nav-item active">
+                <li className="nav-item">
                     <Link className="nav-link" to="/">File an FIR<span className="sr-only">(current)</span></Link>
                 </li>
                 <li className="nav-item">

@@ -6,15 +6,12 @@ const policeStationsSchema = new mongoose.Schema({
         required: true,
         unique: true
     },
-    stationAccount:{
+    stationAddress:{
         type: String,
         unique: true,
         required: true
-    },
-    stationAddress:{
-        type: String,
-        required: true
     }
+    
 });
 
 const Stations = mongoose.model("policeStations",policeStationsSchema)

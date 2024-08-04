@@ -4,14 +4,13 @@ const Stations = require("../models/policeStationsModel")
 const router = express.Router()
 
 // adding stations
-router.post("/",async (req,res)=>{
-    const station = req.body.stationName;
-    const account = req.body.stationAccount;
-    console.log(station);
+router.post("/addstation",async (req,res)=>{
+    const {stationName,stationAddress} = req.body;
+    
     try{
         const stationAdded = await Stations.create({
-            stationName:station,
-            stationAccount:account
+            stationName:stationName,
+            stationAddress:stationAddress
         });
         res.status(200).json(stationAdded);
     }
@@ -23,39 +22,48 @@ router.post("/",async (req,res)=>{
 });
 
 // get all stations
-router.get("/",async (req,res)=>{
-    try{
-        const showStations = await Stations.find();
-        res.status(200).json(showStations);
-    }
-    catch(error){
-        console.log(error)
-        res.status(400).json({error:error.message})
-    }
+// router.get("/allstations",async (req,res)=>{
+//     try{
+//         const showStations = await Stations.find();
+//         res.status(200).json(showStations);
+//     }
+//     catch(error){
+//         console.log(error)
+//         res.status(400).json({error:error.message})
+//     }
     
     
-})
+// })
 
 // get specified station
-router.get("/:id",async (req,res)=>{
-    
+router.get("/findstation",async (req,res)=>{
+    const {stationName,stationAddress} = req.body;
     
     try{
-        const askedStations = await Stations.findById(req.params.id);
-        res.status(200).json(askedStations);
+        const askedStations = await Stations.findOne({stationName: stationName});
+        if(askedStations){
+            res.status(200).json(askedStations);
+        }else{
+            res.json({
+                success: true,
+                message: "No user found"
+            })
+        }
     }
     catch(error){
         console.log(error)
-        res.status(400).json({error:error.message})
+        res.status(400).json({
+            error:error.message
+        })
     }
       
 })
 
 // delete station
-router.delete("/:id",async (req,res)=>{
-    
+router.delete("/delete",async (req,res)=>{
+    const {stationName,stationAddress} = req.body;
     try{
-        const askedStations = await Stations.findByIdAndDelete(req.params.id);
+        const askedStations = await Stations.findOneAndDelete({stationName: stationName});
         res.status(200).json("station deleted");
     }
     catch(error){
@@ -66,19 +74,32 @@ router.delete("/:id",async (req,res)=>{
 })
 
 // update station
-router.patch("/:id",async (req,res)=>{
-    const stationId = req.params.id;
-    // const {station, address} = req.body;
-    console.log(stationId)
+router.patch("/update/:name",async (req,res)=>{
+    const stationName = req.params.name;
+    // const {stationName, stationAddress} = req.body;
+    
     try{
-        const updateStations = await Stations.findByIdAndUpdate(stationId,req.body,{
-            new: true,
+        const stationFound = await Stations.findOneAndUpdate({stationName: stationName},req.body,{
+            new: true
         });
-        res.status(200).json("station updated");
+        if (stationFound){
+            res.status(200).json({
+                success: true,
+                message: `updated details of ${stationName}`
+            });
+        }else{
+            res.status(404).json({
+                success: true,
+                message: "No such station exists!"
+            })
+        }
+        
     }
     catch(error){
         console.log(error)
-        res.status(400).json({error:error.message})
+        res.status(400).json({
+            error:error.message
+        })
     }
       
 })

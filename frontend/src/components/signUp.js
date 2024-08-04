@@ -2,12 +2,14 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 
+
 export const SignUp = () => {
     const [formData, setFormData] = useState({
         userAddress: '',
         userPassword: '',
         userStatus: 'citizen'
     });
+    const [status,setStatus] = useState(process)
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -21,13 +23,14 @@ export const SignUp = () => {
         e.preventDefault();
         console.log(formData)
         try {
-            const response = await axios.post('http://localhost:5000/user', formData)
+            const response = await axios.post("http://localhost:5000/user/signup", formData)
             
             console.log(response.data);
-            
+            setStatus("User created successfully")
             // Handle success (e.g., redirect to login page)
         } catch (err) {
             console.error(err);
+            setStatus("An error occurred!")
         }
     };
 
@@ -64,6 +67,7 @@ export const SignUp = () => {
                 </div>
                 <button type="submit">Sign Up</button>
             </form>
+            {status && <p style={{ color: 'red' }}>{status}</p>}
             <p>Already have an account? <a href="/login">Login</a></p>
         </body>
     );

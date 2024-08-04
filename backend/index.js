@@ -1,18 +1,32 @@
 const express = require("express");
 const mongoose = require("mongoose");
-const cors = require("cors");
+// const cors = require("cors");
 const app = express();
 const dotenv = require("dotenv");
 
-const stationRoute = require("./routes/stationRoute")
-const userRoute = require("./routes/userRoute")
-const firRoute = require("./routes/firRoute")
+
+
+// Middleware
+// const userAuth = require("./middleware/userAuth")
+
 dotenv.config();
 
 URI = process.env.URI
 PORT = process.env.PORT
 app.use(express.json());
-app.use(cors());
+// app.use(cors);
+const stationRoute = require("./routes/stationRoute")
+const userRoute = require("./routes/userRoute")
+const firRoute = require("./routes/firRoute")
+
+
+// app.get("/",(req,res)=>{
+//     return res.json({
+//         success: true,
+//         message: "running"
+//     })
+// }) 
+
 mongoose
     .connect(URI)
     .then(()=>{

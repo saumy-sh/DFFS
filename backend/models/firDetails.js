@@ -39,6 +39,11 @@ const firSchema = new mongoose.Schema({
     },
     incidentLocation:{
         type: String,
+    },
+    firStatus:{
+        type: String,
+        enum: ["registered,reported"],
+        required: true
     }
     
 },

@@ -20,7 +20,7 @@ export const Login = () => {
         e.preventDefault();
         setError('');
         try {
-            const response = await axios.post(`http://localhost:5000/user/${formData.userAddress}`, formData, {
+            const response = await axios.post("http://localhost:5000/user/login", formData, {
                 headers: {
                     'Content-Type': 'application/json'
                 }

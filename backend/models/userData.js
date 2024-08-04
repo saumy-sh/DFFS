@@ -13,7 +13,13 @@ const userSchema = new mongoose.Schema({
     },
     userStatus:{
         type: String,
-        required: true
+        required: true,
+        default: "citizen",
+        enum: ["citizen","station","admin"]
+    },
+    userReportNo:{
+        type: Number,
+        default: 0
     }
 });
 
